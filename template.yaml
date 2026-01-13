@@ -1,0 +1,74 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: AWS-health-check
+
+Parameters:
+  SlackChannelId:
+    Type: String
+    Description: "Slack Channel ID for Health Check notifications"
+  SlackWorkspaceId:
+    Type: String
+    Description: "Slack Workspace ID for Health Check notifications"
+
+Resources:
+  # Chatbot
+  HealthCheckChatbot:
+    Type: AWS::Chatbot::SlackChannelConfiguration
+    Properties:
+      ConfigurationName: health_notification
+      SlackChannelId: !Ref SlackChannelId
+      SlackWorkspaceId: !Ref SlackWorkspaceId
+      IamRoleArn: !Sub arn:aws:iam::${AWS::AccountId}:role/health-chatbot
+      GuardrailPolicies:
+            - !Sub arn:aws:iam::${AWS::AccountId}:policy/health-guardrail
+      SnsTopicArns:
+        - !Ref HealthCheckTopic
+
+  # SNS Topic
+  HealthCheckTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: health_notification
+      KmsMasterKeyId: "alias/health-key-sns"
+
+  HealthCheckTopicPolicy:
+    Type: AWS::SNS::TopicPolicy
+    Properties:
+      Topics:
+        - !Ref HealthCheckTopic
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service: "events.amazonaws.com"
+            Action: "sns:Publish"
+            Resource: !Ref HealthCheckTopic
+            Condition:
+              ArnEquals:
+                aws:SourceArn: !Sub arn:aws:events:ap-northeast-1:${AWS::AccountId}:rule/eventbridge_cloudformation
+
+  HealthCheckTopicSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Endpoint: https://global.sns-api.chatbot.amazonaws.com
+      Protocol: HTTPS
+      TopicArn: !Ref HealthCheckTopic
+
+  # EventBridge
+  HealthCheckEventRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: health_notification
+      EventPattern:
+        source:
+          - "aws.health"
+        detail-type:
+          - "AWS Health Event"
+      State: ENABLED
+      Targets:
+        - Arn: !Ref HealthCheckTopic
+          Id: "HealthCheckTarget"
+
+  
+              
+

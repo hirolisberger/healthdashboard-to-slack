@@ -1,0 +1,5 @@
+# configファイル
+# samconfig.toml
+
+# macOSが勝手に作るファイル
+.DS_Store
