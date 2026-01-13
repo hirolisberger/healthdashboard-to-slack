@@ -1,0 +1,31 @@
+{
+    "version": "0",
+    "id": "7bf73129-1428-4cd3-a780-95db273d1602",
+    "detail-type": "AWS Health Event",
+    "source": "aws.health",
+    "account": "your_accountId",
+    "time": "2024-06-05T06:27:57Z",
+    "region": "ap-northeast-1",
+    "resources": [],
+    "detail": {
+      "eventArn": "arn:aws:health:ap-northeast-1::event/AWS_ELACTICLOADBALANCING_API_ISSUE_your_accountId",
+      "service": "ELACTICLOADBALANCING",
+      "eventTypeCode": "AWS_ELACTICLOADBALANCING_OPERATIONAL_ISSUE",
+      "eventScopeCode": "PUBLIC",
+      "communicationID": "communicationid",
+      "eventTypeCategory": "issue",
+      "startTime": "Wed, 05 Apr 2024 05:01:10 GMT",
+      "endTime": "Wed, 05 Apr 2024 05:30:57 GMT",
+      "lastUpdatedTime": "Mon, 27 Mar 2024 09:01:22 GMT",
+      "statusCode": "open",
+      "eventRegion": "ap-northeast-1",
+      "eventDescription": [{
+        "language": "en-us",
+        "latestDescription": "A description of event will be provided here"
+      }],
+      "affectedAccount": "your_accountId",
+      "page": "1",
+      "totalPages": "1"
+    }
+  }
+  
